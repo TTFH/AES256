@@ -2,6 +2,7 @@
 Encrypt/Decrypt files using AES256 ECB PKCS#7 (SPANISH UI)
 
 EXAMPLE:
+```
 C:\Users\User\aes256>aes256
 Este programa encripta/desencripta archivos
 usando el cifrado AES256 con un modo de operacion ECB
@@ -67,3 +68,4 @@ Decrypted!
 Se han encriptado/desencriptado 50073072 bytes en 65 segundos
 Se han quitado 7 bytes del archivo desencriptado
 Archivo guardado en disco
+```
