@@ -19,7 +19,7 @@ struct AES_ctx {
 typedef uint8_t state_t[4][4];
 
 const uint8_t sbox[256] = {
-  //0	 1	2	  3	 4	5	 6	 7	  8	9	 A	  B	C	 D	 E	 F
+  //0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
   0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
@@ -73,51 +73,51 @@ void KeyExpansion(uint8_t* RoundKey, const uint8_t* Key) {
   
   // The first round key is the key itself.
   for (i = 0; i < Nk; i++) {
-	RoundKey[(i * 4) + 0] = Key[(i * 4) + 0];
-	RoundKey[(i * 4) + 1] = Key[(i * 4) + 1];
-	RoundKey[(i * 4) + 2] = Key[(i * 4) + 2];
-	RoundKey[(i * 4) + 3] = Key[(i * 4) + 3];
+    RoundKey[(i * 4) + 0] = Key[(i * 4) + 0];
+    RoundKey[(i * 4) + 1] = Key[(i * 4) + 1];
+    RoundKey[(i * 4) + 2] = Key[(i * 4) + 2];
+    RoundKey[(i * 4) + 3] = Key[(i * 4) + 3];
   }
 
   // All other round keys are found from the previous round keys.
   for (i = Nk; i < Nb * (Nr + 1); i++) {
-	  k = (i - 1) * 4;
-	  tempa[0] = RoundKey[k + 0];
-	  tempa[1] = RoundKey[k + 1];
-	  tempa[2] = RoundKey[k + 2];
-	  tempa[3] = RoundKey[k + 3];
+      k = (i - 1) * 4;
+      tempa[0] = RoundKey[k + 0];
+      tempa[1] = RoundKey[k + 1];
+      tempa[2] = RoundKey[k + 2];
+      tempa[3] = RoundKey[k + 3];
 
-	if (i % Nk == 0) {
-	  // This function shifts the 4 bytes in a word to the left once.
-	  // [a0,a1,a2,a3] becomes [a1,a2,a3,a0]
-	  const uint8_t u8tmp = tempa[0];
-	  tempa[0] = tempa[1];
-	  tempa[1] = tempa[2];
-	  tempa[2] = tempa[3];
-	  tempa[3] = u8tmp;
+    if (i % Nk == 0) {
+      // This function shifts the 4 bytes in a word to the left once.
+      // [a0,a1,a2,a3] becomes [a1,a2,a3,a0]
+      const uint8_t u8tmp = tempa[0];
+      tempa[0] = tempa[1];
+      tempa[1] = tempa[2];
+      tempa[2] = tempa[3];
+      tempa[3] = u8tmp;
 
-	  // This is a function that takes a four-byte input word and 
-	  // applies the S-box to each of the four bytes to produce an output word.
-	  tempa[0] = getSBoxValue(tempa[0]);
-	  tempa[1] = getSBoxValue(tempa[1]);
-	  tempa[2] = getSBoxValue(tempa[2]);
-	  tempa[3] = getSBoxValue(tempa[3]);
+      // This is a function that takes a four-byte input word and 
+      // applies the S-box to each of the four bytes to produce an output word.
+      tempa[0] = getSBoxValue(tempa[0]);
+      tempa[1] = getSBoxValue(tempa[1]);
+      tempa[2] = getSBoxValue(tempa[2]);
+      tempa[3] = getSBoxValue(tempa[3]);
 
-	  tempa[0] = tempa[0] ^ Rcon[i/Nk];
-	}
+      tempa[0] = tempa[0] ^ Rcon[i/Nk];
+    }
 
-	if (i % Nk == 4) {
-	  tempa[0] = getSBoxValue(tempa[0]);
-	  tempa[1] = getSBoxValue(tempa[1]);
-	  tempa[2] = getSBoxValue(tempa[2]);
-	  tempa[3] = getSBoxValue(tempa[3]);
-	}
+    if (i % Nk == 4) {
+      tempa[0] = getSBoxValue(tempa[0]);
+      tempa[1] = getSBoxValue(tempa[1]);
+      tempa[2] = getSBoxValue(tempa[2]);
+      tempa[3] = getSBoxValue(tempa[3]);
+    }
 
-	j = i * 4; k = (i - Nk) * 4;
-	RoundKey[j + 0] = RoundKey[k + 0] ^ tempa[0];
-	RoundKey[j + 1] = RoundKey[k + 1] ^ tempa[1];
-	RoundKey[j + 2] = RoundKey[k + 2] ^ tempa[2];
-	RoundKey[j + 3] = RoundKey[k + 3] ^ tempa[3];
+    j = i * 4; k = (i - Nk) * 4;
+    RoundKey[j + 0] = RoundKey[k + 0] ^ tempa[0];
+    RoundKey[j + 1] = RoundKey[k + 1] ^ tempa[1];
+    RoundKey[j + 2] = RoundKey[k + 2] ^ tempa[2];
+    RoundKey[j + 3] = RoundKey[k + 3] ^ tempa[3];
   }
 }
 
@@ -128,44 +128,41 @@ void AES_init_ctx(AES_ctx* ctx, const uint8_t* key) {
 // This function adds the round key to state.
 // The round key is added to the state by an XOR function.
 void AddRoundKey(uint8_t round, state_t* state, uint8_t* RoundKey) {
-  uint8_t i, j;
-  for (i = 0; i < 4; i++)
-	for (j = 0; j < 4; j++)
-	  (*state)[i][j] ^= RoundKey[(round * Nb * 4) + (i * Nb) + j];
+  for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t j = 0; j < 4; j++)
+      (*state)[i][j] ^= RoundKey[(round * Nb * 4) + (i * Nb) + j];
 }
 
 // The SubBytes Function Substitutes the values in the
 // state matrix with values in an S-box.
 void SubBytes(state_t* state) {
-  uint8_t i, j;
-  for (i = 0; i < 4; i++)
-	for (j = 0; j < 4; j++)
-	  (*state)[j][i] = getSBoxValue((*state)[j][i]);
+  for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t j = 0; j < 4; j++)
+      (*state)[j][i] = getSBoxValue((*state)[j][i]);
 }
 
 // The ShiftRows() function shifts the rows in the state to the left.
 // Each row is shifted with different offset.
 // Offset = Row number. So the first row is not shifted.
 void ShiftRows(state_t* state) {
-  uint8_t temp;
   // Rotate first row 1 columns to left  
-  temp		   = (*state)[0][1];
+  uint8_t temp   = (*state)[0][1];
   (*state)[0][1] = (*state)[1][1];
   (*state)[1][1] = (*state)[2][1];
   (*state)[2][1] = (*state)[3][1];
   (*state)[3][1] = temp;
 
   // Rotate second row 2 columns to left  
-  temp		   = (*state)[0][2];
+  temp           = (*state)[0][2];
   (*state)[0][2] = (*state)[2][2];
   (*state)[2][2] = temp;
 
-  temp		   = (*state)[1][2];
+  temp           = (*state)[1][2];
   (*state)[1][2] = (*state)[3][2];
   (*state)[3][2] = temp;
 
   // Rotate third row 3 columns to left
-  temp		   = (*state)[0][3];
+  temp           = (*state)[0][3];
   (*state)[0][3] = (*state)[3][3];
   (*state)[3][3] = (*state)[2][3];
   (*state)[2][3] = (*state)[1][3];
@@ -178,53 +175,49 @@ uint8_t xtime(uint8_t x) {
 
 // MixColumns function mixes the columns of the state matrix
 void MixColumns(state_t* state) {
-  uint8_t i;
   uint8_t Tmp, Tm, t;
-  for (i = 0; i < 4; i++) {  
-	t   = (*state)[i][0];
-	Tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3] ;
-	Tm  = (*state)[i][0] ^ (*state)[i][1] ; Tm = xtime(Tm);  (*state)[i][0] ^= Tm ^ Tmp ;
-	Tm  = (*state)[i][1] ^ (*state)[i][2] ; Tm = xtime(Tm);  (*state)[i][1] ^= Tm ^ Tmp ;
-	Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm);  (*state)[i][2] ^= Tm ^ Tmp ;
-	Tm  = (*state)[i][3] ^ t ;			  Tm = xtime(Tm);  (*state)[i][3] ^= Tm ^ Tmp ;
+  for (uint8_t i = 0; i < 4; i++) {  
+    t   = (*state)[i][0];
+    Tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3] ;
+    Tm  = (*state)[i][0] ^ (*state)[i][1] ; Tm = xtime(Tm) ; (*state)[i][0] ^= Tm ^ Tmp ;
+    Tm  = (*state)[i][1] ^ (*state)[i][2] ; Tm = xtime(Tm) ; (*state)[i][1] ^= Tm ^ Tmp ;
+    Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm) ; (*state)[i][2] ^= Tm ^ Tmp ;
+    Tm  = (*state)[i][3] ^ t              ; Tm = xtime(Tm) ; (*state)[i][3] ^= Tm ^ Tmp ;
   }
 }
 
 uint8_t Multiply(uint8_t x, uint8_t y) {
   return (((y & 1) * x) ^
-	   ((y>>1 & 1) * xtime(x)) ^
-	   ((y>>2 & 1) * xtime(xtime(x))) ^
-	   ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^
-	   ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))));
+       ((y>>1 & 1) * xtime(x)) ^
+       ((y>>2 & 1) * xtime(xtime(x))) ^
+       ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^
+       ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))));
 }
 
 void InvMixColumns(state_t* state) {
-  int i;
   uint8_t a, b, c, d;
-  for (i = 0; i < 4; i++) { 
-	a = (*state)[i][0];
-	b = (*state)[i][1];
-	c = (*state)[i][2];
-	d = (*state)[i][3];
+  for (int i = 0; i < 4; i++) { 
+    a = (*state)[i][0];
+    b = (*state)[i][1];
+    c = (*state)[i][2];
+    d = (*state)[i][3];
 
-	(*state)[i][0] = Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^ Multiply(d, 0x09);
-	(*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
-	(*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
-	(*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+    (*state)[i][0] = Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^ Multiply(d, 0x09);
+    (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
+    (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
+    (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
   }
 }
 
 void InvSubBytes(state_t* state) {
-  uint8_t i, j;
-  for (i = 0; i < 4; i++)
-	for (j = 0; j < 4; j++)
-	  (*state)[j][i] = getSBoxInvert((*state)[j][i]);
+  for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t j = 0; j < 4; j++)
+      (*state)[j][i] = getSBoxInvert((*state)[j][i]);
 }
 
 void InvShiftRows(state_t* state) {
-  uint8_t temp;
   // Rotate first row 1 columns to right  
-  temp = (*state)[3][1];
+  uint8_t temp = (*state)[3][1];
   (*state)[3][1] = (*state)[2][1];
   (*state)[2][1] = (*state)[1][1];
   (*state)[1][1] = (*state)[0][1];
@@ -249,18 +242,17 @@ void InvShiftRows(state_t* state) {
 
 // Cipher is the main function that encrypts the PlainText.
 void Cipher(state_t* state, uint8_t* RoundKey) {
-  uint8_t round = 0;
   // Add the First round key to the state before starting the rounds.
   AddRoundKey(0, state, RoundKey); 
   
   // There will be Nr rounds.
   // The first Nr-1 rounds are identical.
   // These Nr-1 rounds are executed in the loop below.
-  for (round = 1; round < Nr; round++) {
-	SubBytes(state);
-	ShiftRows(state);
-	MixColumns(state);
-	AddRoundKey(round, state, RoundKey);
+  for (uint8_t round = 1; round < Nr; round++) {
+    SubBytes(state);
+    ShiftRows(state);
+    MixColumns(state);
+    AddRoundKey(round, state, RoundKey);
   }
   
   // The last round is given below.
@@ -271,18 +263,17 @@ void Cipher(state_t* state, uint8_t* RoundKey) {
 }
 
 void InvCipher(state_t* state,uint8_t* RoundKey) {
-  uint8_t round = 0;
   // Add the First round key to the state before starting the rounds.
   AddRoundKey(Nr, state, RoundKey); 
 
   // There will be Nr rounds.
   // The first Nr-1 rounds are identical.
   // These Nr-1 rounds are executed in the loop below.
-  for (round = (Nr - 1); round > 0; --round) {
-	InvShiftRows(state);
-	InvSubBytes(state);
-	AddRoundKey(round, state, RoundKey);
-	InvMixColumns(state);
+  for (uint8_t round = (Nr - 1); round > 0; --round) {
+    InvShiftRows(state);
+    InvSubBytes(state);
+    AddRoundKey(round, state, RoundKey);
+    InvMixColumns(state);
   }
   
   // The last round is given below.
@@ -304,138 +295,138 @@ void AES_ECB_decrypt(AES_ctx* ctx, uint8_t* buf) {
 
 // prints string as hex
 void phex(uint8_t* str) {
-	uint8_t len = AES_BLOCKLEN;
-	unsigned char i;
-	for (i = 0; i < len; i++)
-		printf("%.2X ", str[i]);
-	printf("\n");
+    uint8_t len = AES_BLOCKLEN;
+    for (uint8_t i = 0; i < len; i++)
+        printf("%.2X ", str[i]);
+    printf("\n");
 }
 
 void AES_encrypt(const uint8_t* key, uint8_t* text, uint32_t size) {
-	AES_ctx ctx;
-	AES_init_ctx(&ctx, key);
-	for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
-		AES_ECB_encrypt(&ctx, text + i * AES_BLOCKLEN);
+    AES_ctx ctx;
+    AES_init_ctx(&ctx, key);
+    for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
+        AES_ECB_encrypt(&ctx, text + i * AES_BLOCKLEN);
 }
+
 void AES_decrypt(const uint8_t* key, uint8_t* text, uint32_t size) {
-	AES_ctx ctx;
-	AES_init_ctx(&ctx, key);
-	for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
-		AES_ECB_decrypt(&ctx, text + i * AES_BLOCKLEN);
+    AES_ctx ctx;
+    AES_init_ctx(&ctx, key);
+    for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
+        AES_ECB_decrypt(&ctx, text + i * AES_BLOCKLEN);
 }
 
 int hex(char c) {
-	assert(isxdigit(c));
-	char str[2] = {c, '\0'};
-	return strtol(str, NULL, 16);
+    assert(isxdigit(c));
+    char str[2] = {c, '\0'};
+    return strtol(str, NULL, 16);
 }
 
 int main() {
-	printf("Este programa encripta/desencripta archivos\n");
-	printf("usando el cifrado AES256 con un modo de operacion ECB\n");
-	printf("y un esquema de relleno PKCS#7\n");
-	printf("\nElija una opcion:");
-	printf("\n\t1) Generar clave aleatoria");
-	printf("\n\t2) Cargar clave de archivo");
-	printf("\n\t3) Ingresar clave");
-	printf("\n");
-	uint32_t opt;
-	scanf("%u", &opt);
-	assert(opt == 1 || opt == 2 || opt == 3);
-	printf("\n");
-	uint8_t key[32];
+    printf("Este programa encripta/desencripta archivos\n");
+    printf("usando el cifrado AES256 con un modo de operacion ECB\n");
+    printf("y un esquema de relleno PKCS#7\n");
+    printf("\nElija una opcion:");
+    printf("\n\t1) Generar clave aleatoria");
+    printf("\n\t2) Cargar clave de archivo");
+    printf("\n\t3) Ingresar clave");
+    printf("\n");
+    uint32_t opt;
+    scanf("%u", &opt);
+    assert(opt == 1 || opt == 2 || opt == 3);
+    printf("\n");
+    uint8_t key[32];
 
-	if (opt == 1) {
-		srand(time(NULL));
-		for (uint8_t i = 0; i < 32; i++)
-			key[i] = rand() % 256;
-		printf("Se ha generado una clave aleatoria\n");
-	} else if (opt == 2) {
-		printf("Ingrese el nombre del archivo\n");
-		char keyf[32];
-		scanf("%s", keyf);
-		FILE* kfile = fopen(keyf, "rb"); // abrir como lectura-binario
-		fseek(kfile, 0, SEEK_END); // cursor al final del archivo + 0
-		uint8_t ksize = ftell(kfile); // posicion del cursor (en bytes)
-		rewind(kfile); // ir al comienzo del archivo
-		assert(ksize == 32); // la clave debe ser de 32 bytes
-		fread(key, 1, ksize, kfile); // leer de a byte
-		fclose(kfile);
-		printf("Se ha cargado la clave del archivo %s\n", keyf);
-	} else {
-		char digit1, digit2;
-		printf("Ingrese la clave (64 digitos hexadecimales):\n");
-		for (uint8_t i = 0; i < 32; i++) {
-			do {
-				digit1 = getchar();
-			} while (digit1 == ' ' || digit1 == '\n');
-			do {
-				digit2 = getchar();
-			} while (digit2 == ' ' || digit2 == '\n');
-			key[i] = hex(digit1) * 16 + hex(digit2);
-		}
-		printf("Se ha leido la clave\n");
-	}
+    if (opt == 1) {
+        srand(time(NULL));
+        for (uint8_t i = 0; i < 32; i++)
+            key[i] = rand() % 256;
+        printf("Se ha generado una clave aleatoria\n");
+    } else if (opt == 2) {
+        printf("Ingrese el nombre del archivo\n");
+        char keyf[32];
+        scanf("%s", keyf);
+        FILE* kfile = fopen(keyf, "rb"); // abrir como lectura-binario
+        fseek(kfile, 0, SEEK_END); // cursor al final del archivo + 0
+        uint8_t ksize = ftell(kfile); // posicion del cursor (en bytes)
+        rewind(kfile); // ir al comienzo del archivo
+        assert(ksize == 32); // la clave debe ser de 32 bytes
+        fread(key, 1, ksize, kfile); // leer de a byte
+        fclose(kfile);
+        printf("Se ha cargado la clave del archivo %s\n", keyf);
+    } else {
+        char digit1, digit2;
+        printf("Ingrese la clave (64 digitos hexadecimales):\n");
+        for (uint8_t i = 0; i < 32; i++) {
+            do {
+                digit1 = getchar();
+            } while (digit1 == ' ' || digit1 == '\n');
+            do {
+                digit2 = getchar();
+            } while (digit2 == ' ' || digit2 == '\n');
+            key[i] = hex(digit1) * 16 + hex(digit2);
+        }
+        printf("Se ha leido la clave\n");
+    }
 
-	printf("Key:\n");
-	for (uint8_t i = 0; i < 32 / AES_BLOCKLEN; i++)
-		phex(key + i * AES_BLOCKLEN);
-	printf("\n");
+    printf("Key:\n");
+    for (uint8_t i = 0; i < 32 / AES_BLOCKLEN; i++)
+        phex(key + i * AES_BLOCKLEN);
+    printf("\n");
 
-	printf("La clave se ha guardado en el archivo key.bin\n\n");
-	FILE* pFile = fopen("key.bin", "wb");
-	fwrite(key, sizeof(uint8_t), 32, pFile);
-	fclose(pFile);
+    FILE* pFile = fopen("key.bin", "wb");
+    fwrite(key, sizeof(uint8_t), 32, pFile);
+    fclose(pFile);
+    printf("La clave se ha guardado en el archivo key.bin\n\n");
 
-	printf("Ingreses nombre del archivo a Encriptar/Desencriptar:\n");
-	printf("ADVERTENCIA: El archivo sera sobreescrito.\n");
-	char fname[32];
-	scanf("%s", fname);
+    printf("Ingreses nombre del archivo a Encriptar/Desencriptar:\n");
+    printf("ADVERTENCIA: El archivo sera sobreescrito.\n");
+    char fname[32];
+    scanf("%s", fname);
 
-	FILE* file = fopen(fname, "rb+"); // abrir coomo lectura-binario
-	fseek(file, 0, SEEK_END); // cursor al final del archivo + 0
-	uint32_t size = ftell(file); // posicion del cursor (en bytes)
+    FILE* file = fopen(fname, "rb+"); // abrir coomo lectura-binario
+    fseek(file, 0, SEEK_END); // cursor al final del archivo + 0
+    uint32_t size = ftell(file); // posicion del cursor (en bytes)
 
-	printf("\nElija una opcion:");
-	printf("\n\t1) Encriptar");
-	printf("\n\t2) Desencriptar");
-	printf("\n");
-	scanf("%u", &opt);
-	assert(opt == 1 || opt == 2);
-	printf("\n");
+    printf("\nElija una opcion:");
+    printf("\n\t1) Encriptar");
+    printf("\n\t2) Desencriptar");
+    printf("\n");
+    scanf("%u", &opt);
+    assert(opt == 1 || opt == 2);
+    printf("\n");
 
-	if (opt == 1) {
-		uint8_t len = AES_BLOCKLEN - size % AES_BLOCKLEN;
-		uint8_t* pad = new uint8_t[len];
-		for (uint8_t i = 0; i < len; i++)
-			pad[i] = len;
-		fwrite(pad, sizeof(uint8_t), len, file);
-		size += len;
-		printf("Se han agregado %d bytes al archivo para encriptarlo\n", len);
-	}
-	rewind(file); // ir al comienzo del archivo
-	uint8_t* input = new uint8_t[size];
-	fread(input, 1, size, file); // leer de a byte
-	fclose(file);
-	time_t start = time(NULL);
-	if (opt == 1) {
-		AES_encrypt(key, input, size);
-		printf("Encrypted!\n");
-	} else {
-		AES_decrypt(key, input, size);
-		printf("Decrypted!\n");
-	}
-	time_t end = time(NULL);
-	float diff = difftime(end, start);
-	printf("Se han encriptado/desencriptado %d bytes en %g segundos\n", size, diff);
-	if (opt == 2) {
-		uint32_t del = input[size - 1];
-		size -= del;
-		printf("Se han quitado %d bytes del archivo desencriptado\n", del);
-	}
-	pFile = fopen(fname, "wb");
-	fwrite(input, sizeof(uint8_t), size, pFile);
-	fclose(pFile);
-	printf("Archivo guardado en disco\n");
-	return 0;
+    if (opt == 1) {
+        uint8_t len = AES_BLOCKLEN - size % AES_BLOCKLEN;
+        uint8_t* pad = new uint8_t[len];
+        for (uint8_t i = 0; i < len; i++)
+            pad[i] = len;
+        fwrite(pad, sizeof(uint8_t), len, file);
+        size += len;
+        printf("Se han agregado %d bytes al archivo para encriptarlo\n", len);
+    }
+    rewind(file); // ir al comienzo del archivo
+    uint8_t* input = new uint8_t[size];
+    fread(input, 1, size, file); // leer de a byte
+    fclose(file);
+    time_t start = time(NULL);
+    if (opt == 1) {
+        AES_encrypt(key, input, size);
+        printf("Encrypted!\n");
+    } else {
+        AES_decrypt(key, input, size);
+        printf("Decrypted!\n");
+    }
+    time_t end = time(NULL);
+    float diff = difftime(end, start);
+    printf("Se han encriptado/desencriptado %d bytes en %g segundos\n", size, diff);
+    if (opt == 2) {
+        uint32_t del = input[size - 1];
+        size -= del;
+        printf("Se han quitado %d bytes del archivo desencriptado\n", del);
+    }
+    pFile = fopen(fname, "wb");
+    fwrite(input, sizeof(uint8_t), size, pFile);
+    fclose(pFile);
+    printf("Archivo guardado en disco\n");
+    return 0;
 }
