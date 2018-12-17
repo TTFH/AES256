@@ -1,71 +1,84 @@
 # AES256
-Encrypt/Decrypt files using AES256 ECB PKCS#7 (SPANISH UI)
+Encrypt/Decrypt files using AES256 ECB PKCS#7
 
 EXAMPLE:
 ```
+C:\Users\User\aes256>g++ -Wall -Werror AES256.cpp -o aes256
+
 C:\Users\User\aes256>aes256
-Este programa encripta/desencripta archivos
-usando el cifrado AES256 con un modo de operacion ECB
-y un esquema de relleno PKCS#7
+This program encrypts/decrypts files
+using AES256 encryption with ECB mode of operation
+and PKCS#7 padding method
 
-Elija una opcion:
-        1) Generar clave aleatoria
-        2) Cargar clave de archivo
-        3) Ingresar clave
+The maximum supported file size is 4GB
+Enough RAM is required to load the file
+Encrypted files are 1 to 16 bytes larger than the original ones
+
+Choose an option:
+        1) Generate random key (DON'T USE, THIS RNG CAN BE EASILY REVERTED)
+        2) Load key from file
+        3) Type key
 1
 
-Se ha generado una clave aleatoria
+Loading Source of Entropy       COMPLETE
+Generating Keys COMPLETE
 Key:
-0D F4 0B D2 0D 97 78 CC 97 CE 93 75 EA 2C B9 89
-63 E6 55 91 F4 7D F9 AB D1 9D AE 8D 6C 46 88 C8
+E5 A6 D2 32 DA 3A FE 3A 5F 14 79 F0 02 19 E1 8E
+E7 6C 24 59 0F 9A E5 76 DA 14 21 FE CB E3 12 55
 
-La clave se ha guardado en el archivo key.bin
+Key has been stored in the file key.bin
 
-Ingreses nombre del archivo a Encriptar/Desencriptar:
-ADVERTENCIA: El archivo sera sobreescrito.
-example.mkv
+Enter name of the file to Encrypt/Decrypt:
+WARNING: The file will be overwritten
+example.mp4
 
-Elija una opcion:
-        1) Encriptar
-        2) Desencriptar
+Choose an option:
+        1) Encrypt
+        2) Decrypt
 1
 
-Se han agregado 7 bytes al archivo para encriptarlo
+10 bytes have been added to the file to encrypt it
+Estimated Encryption time: 8 seconds
 Encrypted!
-Se han encriptado/desencriptado 50073072 bytes en 8 segundos
-Archivo guardado en disco
+50152880 bytes have been encrypted / decrypted in 8 seconds
+File saved on disk
 
 C:\Users\User\aes256>aes256
-Este programa encripta/desencripta archivos
-usando el cifrado AES256 con un modo de operacion ECB
-y un esquema de relleno PKCS#7
+This program encrypts/decrypts files
+using AES256 encryption with ECB mode of operation
+and PKCS#7 padding method
 
-Elija una opcion:
-        1) Generar clave aleatoria
-        2) Cargar clave de archivo
-        3) Ingresar clave
+The maximum supported file size is 4GB
+Enough RAM is required to load the file
+Encrypted files are 1 to 16 bytes larger than the original ones
+
+Choose an option:
+        1) Generate random key (DON'T USE, THIS RNG CAN BE EASILY REVERTED)
+        2) Load key from file
+        3) Type key
 2
 
-Ingrese el nombre del archivo
+Enter the name of the binary file containing the key
 key.bin
-Se ha cargado la clave del archivo key.bin
+Key loaded from file key.bin
 Key:
-0D F4 0B D2 0D 97 78 CC 97 CE 93 75 EA 2C B9 89
-63 E6 55 91 F4 7D F9 AB D1 9D AE 8D 6C 46 88 C8
+E5 A6 D2 32 DA 3A FE 3A 5F 14 79 F0 02 19 E1 8E
+E7 6C 24 59 0F 9A E5 76 DA 14 21 FE CB E3 12 55
 
-La clave se ha guardado en el archivo key.bin
+Key has been stored in the file key.bin
 
-Ingreses nombre del archivo a Encriptar/Desencriptar:
-ADVERTENCIA: El archivo sera sobreescrito.
-example.mkv
+Enter name of the file to Encrypt/Decrypt:
+WARNING: The file will be overwritten
+example.mp4
 
-Elija una opcion:
-        1) Encriptar
-        2) Desencriptar
+Choose an option:
+        1) Encrypt
+        2) Decrypt
 2
 
+Estimated Decryption time: 66 seconds
 Decrypted!
-Se han encriptado/desencriptado 50073072 bytes en 65 segundos
-Se han quitado 7 bytes del archivo desencriptado
-Archivo guardado en disco
+50152880 bytes have been encrypted / decrypted in 65 seconds
+10 bytes have been removed from the decrypted file
+File saved on disk
 ```
