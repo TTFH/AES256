@@ -410,15 +410,17 @@ int main() {
     fclose(file);
     time_t start = time(NULL);
     if (opt == 1) {
+		printf("Tiempo estimado de encriptacion: %d segundos\n", size / (8 * 760000));
         AES_encrypt(key, input, size);
         printf("Encrypted!\n");
     } else {
+		printf("Tiempo estimado de desencriptacion: %d segundos\n", size / 760000);
         AES_decrypt(key, input, size);
         printf("Decrypted!\n");
     }
     time_t end = time(NULL);
-    float diff = difftime(end, start);
-    printf("Se han encriptado/desencriptado %d bytes en %g segundos\n", size, diff);
+    uint32_t diff = difftime(end, start);
+    printf("Se han encriptado/desencriptado %d bytes en %d segundos\n", size, diff);
     if (opt == 2) {
         uint32_t del = input[size - 1];
         size -= del;
