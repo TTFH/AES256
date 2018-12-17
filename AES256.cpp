@@ -19,7 +19,7 @@ struct AES_ctx {
 typedef uint8_t state_t[4][4];
 
 const uint8_t sbox[256] = {
-  //0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
+// 0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
   0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15,
@@ -156,7 +156,6 @@ void ShiftRows(state_t* state) {
   temp           = (*state)[0][2];
   (*state)[0][2] = (*state)[2][2];
   (*state)[2][2] = temp;
-
   temp           = (*state)[1][2];
   (*state)[1][2] = (*state)[3][2];
   (*state)[3][2] = temp;
@@ -295,140 +294,148 @@ void AES_ECB_decrypt(AES_ctx* ctx, uint8_t* buf) {
 
 // prints string as hex
 void phex(uint8_t* str) {
-    uint8_t len = AES_BLOCKLEN;
-    for (uint8_t i = 0; i < len; i++)
-        printf("%.2X ", str[i]);
-    printf("\n");
+  uint8_t len = AES_BLOCKLEN;
+  for (uint8_t i = 0; i < len; i++)
+    printf("%.2X ", str[i]);
+  printf("\n");
 }
 
-void AES_encrypt(const uint8_t* key, uint8_t* text, uint32_t size) {
-    AES_ctx ctx;
-    AES_init_ctx(&ctx, key);
-    for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
-        AES_ECB_encrypt(&ctx, text + i * AES_BLOCKLEN);
+void AES_encrypt(const uint8_t* key, uint8_t* data, uint32_t size) {
+  AES_ctx ctx;
+  AES_init_ctx(&ctx, key);
+  for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
+    AES_ECB_encrypt(&ctx, data + i * AES_BLOCKLEN);
 }
 
-void AES_decrypt(const uint8_t* key, uint8_t* text, uint32_t size) {
-    AES_ctx ctx;
-    AES_init_ctx(&ctx, key);
-    for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
-        AES_ECB_decrypt(&ctx, text + i * AES_BLOCKLEN);
+void AES_decrypt(const uint8_t* key, uint8_t* data, uint32_t size) {
+  AES_ctx ctx;
+  AES_init_ctx(&ctx, key);
+  for (uint32_t i = 0; i < size / AES_BLOCKLEN; i++)
+    AES_ECB_decrypt(&ctx, data + i * AES_BLOCKLEN);
 }
 
 int hex(char c) {
-    assert(isxdigit(c));
-    char str[2] = {c, '\0'};
-    return strtol(str, NULL, 16);
+  assert(isxdigit(c));
+  char str[2] = {c, '\0'};
+  return strtol(str, NULL, 16);
 }
 
 int main() {
-    printf("Este programa encripta/desencripta archivos\n");
-    printf("usando el cifrado AES256 con un modo de operacion ECB\n");
-    printf("y un esquema de relleno PKCS#7\n");
-    printf("\nElija una opcion:");
-    printf("\n\t1) Generar clave aleatoria");
-    printf("\n\t2) Cargar clave de archivo");
-    printf("\n\t3) Ingresar clave");
-    printf("\n");
-    uint32_t opt;
-    scanf("%u", &opt);
-    assert(opt == 1 || opt == 2 || opt == 3);
-    printf("\n");
-    uint8_t key[32];
+  printf("This program encrypts/decrypts files\n");
+  printf("using AES256 encryption with ECB mode of operation\n");
+  printf("and PKCS#7 padding method\n");
 
-    if (opt == 1) {
-        srand(time(NULL));
-        for (uint8_t i = 0; i < 32; i++)
-            key[i] = rand() % 256;
-        printf("Se ha generado una clave aleatoria\n");
-    } else if (opt == 2) {
-        printf("Ingrese el nombre del archivo\n");
-        char keyf[32];
-        scanf("%s", keyf);
-        FILE* kfile = fopen(keyf, "rb"); // abrir como lectura-binario
-        fseek(kfile, 0, SEEK_END); // cursor al final del archivo + 0
-        uint8_t ksize = ftell(kfile); // posicion del cursor (en bytes)
-        rewind(kfile); // ir al comienzo del archivo
-        assert(ksize == 32); // la clave debe ser de 32 bytes
-        fread(key, 1, ksize, kfile); // leer de a byte
-        fclose(kfile);
-        printf("Se ha cargado la clave del archivo %s\n", keyf);
-    } else {
-        char digit1, digit2;
-        printf("Ingrese la clave (64 digitos hexadecimales):\n");
-        for (uint8_t i = 0; i < 32; i++) {
-            do {
-                digit1 = getchar();
-            } while (digit1 == ' ' || digit1 == '\n');
-            do {
-                digit2 = getchar();
-            } while (digit2 == ' ' || digit2 == '\n');
-            key[i] = hex(digit1) * 16 + hex(digit2);
-        }
-        printf("Se ha leido la clave\n");
+  printf("\nThe maximum supported file size is 4GB\n");
+  printf("Enough RAM is required to load the file\n");
+  printf("Encrypted files are 1 to 16 bytes larger than the original ones\n");
+
+  printf("\nChoose an option:");
+  printf("\n\t1) Generate random key");
+  printf("\n\t2) Load key from file");
+  printf("\n\t3) Type key\n");
+
+  uint32_t opt;
+  scanf("%u", &opt);
+  assert(opt == 1 || opt == 2 || opt == 3);
+  printf("\n");
+  uint8_t key[32];
+
+  if (opt == 1) {
+    printf("Loading Source of Entropy\t");
+    srand(time(NULL));
+    printf("COMPLETE\n");
+    printf("Generating Keys\t");
+    for (uint8_t i = 0; i < 32; i++)
+      key[i] = rand() % 256;
+    printf("COMPLETE\n");
+  } else if (opt == 2) {
+    printf("Enter the name of the binary file containing the key\n");
+    char keyf[32];
+    scanf("%s", keyf);
+    FILE* kfile = fopen(keyf, "rb");
+    fseek(kfile, 0, SEEK_END);
+    uint8_t ksize = ftell(kfile);
+    rewind(kfile);
+    assert(ksize == 32);
+    fread(key, 1, ksize, kfile);
+    fclose(kfile);
+    printf("Key loaded from file %s\n", keyf);
+  } else {
+    char digit1, digit2;
+    printf("Enter the key (64 hexadecimal digits):\n");
+    for (uint8_t i = 0; i < 32; i++) {
+      do {
+        digit1 = getchar();
+      } while (digit1 == ' ' || digit1 == '\n');
+      do {
+        digit2 = getchar();
+      } while (digit2 == ' ' || digit2 == '\n');
+      key[i] = hex(digit1) * 16 + hex(digit2);
     }
+    printf("Key readed\n");
+  }
 
-    printf("Key:\n");
-    for (uint8_t i = 0; i < 32 / AES_BLOCKLEN; i++)
-        phex(key + i * AES_BLOCKLEN);
-    printf("\n");
+  printf("Key:\n");
+  for (uint8_t i = 0; i < 32 / AES_BLOCKLEN; i++)
+    phex(key + i * AES_BLOCKLEN);
+  printf("\n");
 
-    FILE* pFile = fopen("key.bin", "wb");
-    fwrite(key, sizeof(uint8_t), 32, pFile);
-    fclose(pFile);
-    printf("La clave se ha guardado en el archivo key.bin\n\n");
+  FILE* pFile = fopen("key.bin", "wb");
+  fwrite(key, sizeof(uint8_t), 32, pFile);
+  fclose(pFile);
+  printf("Key has been stored in the file key.bin\n\n");
 
-    printf("Ingreses nombre del archivo a Encriptar/Desencriptar:\n");
-    printf("ADVERTENCIA: El archivo sera sobreescrito.\n");
-    char fname[32];
-    scanf("%s", fname);
+  printf("Enter name of the file to Encrypt/Decrypt:\n");
+  printf("WARNING: The file will be overwritten\n");
+  char fname[32];
+  scanf("%s", fname);
 
-    FILE* file = fopen(fname, "rb+"); // abrir coomo lectura-binario
-    fseek(file, 0, SEEK_END); // cursor al final del archivo + 0
-    uint32_t size = ftell(file); // posicion del cursor (en bytes)
+  FILE* file = fopen(fname, "rb+");
+  fseek(file, 0, SEEK_END);
+  uint32_t size = ftell(file);
 
-    printf("\nElija una opcion:");
-    printf("\n\t1) Encriptar");
-    printf("\n\t2) Desencriptar");
-    printf("\n");
-    scanf("%u", &opt);
-    assert(opt == 1 || opt == 2);
-    printf("\n");
+  printf("\nChoose an option:");
+  printf("\n\t1) Encrypt");
+  printf("\n\t2) Decrypt");
+  printf("\n");
+  scanf("%u", &opt);
+  assert(opt == 1 || opt == 2);
+  printf("\n");
 
-    if (opt == 1) {
-        uint8_t len = AES_BLOCKLEN - size % AES_BLOCKLEN;
-        uint8_t* pad = new uint8_t[len];
-        for (uint8_t i = 0; i < len; i++)
-            pad[i] = len;
-        fwrite(pad, sizeof(uint8_t), len, file);
-        size += len;
-        printf("Se han agregado %d bytes al archivo para encriptarlo\n", len);
-    }
-    rewind(file); // ir al comienzo del archivo
-    uint8_t* input = new uint8_t[size];
-    fread(input, 1, size, file); // leer de a byte
-    fclose(file);
-    time_t start = time(NULL);
-    if (opt == 1) {
-		printf("Tiempo estimado de encriptacion: %d segundos\n", size / (8 * 760000));
-        AES_encrypt(key, input, size);
-        printf("Encrypted!\n");
-    } else {
-		printf("Tiempo estimado de desencriptacion: %d segundos\n", size / 760000);
-        AES_decrypt(key, input, size);
-        printf("Decrypted!\n");
-    }
-    time_t end = time(NULL);
-    uint32_t diff = difftime(end, start);
-    printf("Se han encriptado/desencriptado %d bytes en %d segundos\n", size, diff);
-    if (opt == 2) {
-        uint32_t del = input[size - 1];
-        size -= del;
-        printf("Se han quitado %d bytes del archivo desencriptado\n", del);
-    }
-    pFile = fopen(fname, "wb");
-    fwrite(input, sizeof(uint8_t), size, pFile);
-    fclose(pFile);
-    printf("Archivo guardado en disco\n");
-    return 0;
+  if (opt == 1) {
+    uint8_t len = AES_BLOCKLEN - size % AES_BLOCKLEN;
+    uint8_t* pad = new uint8_t[len];
+    for (uint8_t i = 0; i < len; i++)
+      pad[i] = len;
+    fwrite(pad, sizeof(uint8_t), len, file);
+    size += len;
+    printf("%d bytes have been added to the file to encrypt it\n", len);
+  }
+  rewind(file);
+  uint8_t* input = new uint8_t[size];
+  fread(input, 1, size, file);
+  fclose(file);
+  time_t start = time(NULL);
+  if (opt == 1) {
+    printf("Estimated Encryption time: %d seconds\n", size / (8 * 750000));
+    AES_encrypt(key, input, size);
+    printf("Encrypted!\n");
+  } else {
+    printf("Estimated Decryption time: %d seconds\n", size / 750000);
+    AES_decrypt(key, input, size);
+    printf("Decrypted!\n");
+  }
+  time_t end = time(NULL);
+  uint32_t diff = difftime(end, start);
+  printf("%d bytes have been encrypted / decrypted in %d seconds\n", size, diff);
+  if (opt == 2) {
+    uint32_t del = input[size - 1];
+    size -= del;
+    printf("%d bytes have been removed from the decrypted file\n", del);
+  }
+  pFile = fopen(fname, "wb");
+  fwrite(input, sizeof(uint8_t), size, pFile);
+  fclose(pFile);
+  printf("File saved on disk\n");
+  return 0;
 }
