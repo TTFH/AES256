@@ -1,14 +1,14 @@
 # AES256
-Encrypt/Decrypt files using AES256 ECB PKCS#7
+Encrypt/Decrypt files using AES256 ECB ANSI X9.23
 
 EXAMPLE:
 ```
-C:\Users\User\aes256>g++ -Wall -Werror AES256.cpp -o aes256
+C:\Users\User\aes256>g++ -Wall -Werror -O3 AES256.cpp -o aes256
 
 C:\Users\User\aes256>aes256
 This program encrypts/decrypts files
 using AES256 encryption with ECB mode of operation
-and PKCS#7 padding method
+and ANSI X9.23 padding method
 
 The maximum supported file size is 4GB
 Enough RAM is required to load the file
@@ -21,32 +21,32 @@ Choose an option:
 1
 
 Loading Source of Entropy       COMPLETE
-Generating Keys COMPLETE
+Generating Keys                 COMPLETE
 Key:
-E5 A6 D2 32 DA 3A FE 3A 5F 14 79 F0 02 19 E1 8E
-E7 6C 24 59 0F 9A E5 76 DA 14 21 FE CB E3 12 55
+56 57 65 75 4B A9 1F 7E C9 9F 25 EC 3E 46 6B B5
+57 DE 37 D2 BB C7 7B 42 F8 A5 62 51 BD BC 29 1A
 
 Key has been stored in the file key.bin
 
 Enter name of the file to Encrypt/Decrypt:
 WARNING: The file will be overwritten
-example.mp4
+example.mkv
 
 Choose an option:
         1) Encrypt
         2) Decrypt
 1
 
-10 bytes have been added to the file to encrypt it
-Estimated Encryption time: 8 seconds
+5 bytes have been added to the file to encrypt it
+Estimated Encryption time: 23 seconds
 Encrypted!
-50152880 bytes have been encrypted / decrypted in 8 seconds
+1083805680 bytes have been encrypted / decrypted in 23 seconds
 File saved on disk
 
 C:\Users\User\aes256>aes256
 This program encrypts/decrypts files
 using AES256 encryption with ECB mode of operation
-and PKCS#7 padding method
+and ANSI X9.23 padding method
 
 The maximum supported file size is 4GB
 Enough RAM is required to load the file
@@ -62,23 +62,23 @@ Enter the name of the binary file containing the key
 key.bin
 Key loaded from file key.bin
 Key:
-E5 A6 D2 32 DA 3A FE 3A 5F 14 79 F0 02 19 E1 8E
-E7 6C 24 59 0F 9A E5 76 DA 14 21 FE CB E3 12 55
+56 57 65 75 4B A9 1F 7E C9 9F 25 EC 3E 46 6B B5
+57 DE 37 D2 BB C7 7B 42 F8 A5 62 51 BD BC 29 1A
 
 Key has been stored in the file key.bin
 
 Enter name of the file to Encrypt/Decrypt:
 WARNING: The file will be overwritten
-example.mp4
+example.mkv
 
 Choose an option:
         1) Encrypt
         2) Decrypt
 2
 
-Estimated Decryption time: 66 seconds
+Estimated Decryption time: 56 seconds
 Decrypted!
-50152880 bytes have been encrypted / decrypted in 65 seconds
-10 bytes have been removed from the decrypted file
+1083805680 bytes have been encrypted / decrypted in 55 seconds
+5 bytes have been removed from the decrypted file
 File saved on disk
 ```
