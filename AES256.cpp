@@ -292,14 +292,6 @@ void AES_ECB_decrypt(AES_ctx* ctx, uint8_t* buf) {
   InvCipher((state_t*)buf, ctx->RoundKey);
 }
 
-// prints string as hex
-void phex(uint8_t* str) {
-  uint8_t len = AES_BLOCKLEN;
-  for (uint8_t i = 0; i < len; i++)
-    printf("%.2X ", str[i]);
-  printf("\n");
-}
-
 void AES_encrypt(const uint8_t* key, uint8_t* data, uint32_t size) {
   AES_ctx ctx;
   AES_init_ctx(&ctx, key);
@@ -314,18 +306,39 @@ void AES_decrypt(const uint8_t* key, uint8_t* data, uint32_t size) {
     AES_ECB_decrypt(&ctx, data + i * AES_BLOCKLEN);
 }
 
-int hex(char c) {
+void PrintHex(const uint8_t* str, uint8_t len) {
+  for (uint8_t i = 0; i < len; i++) {
+    if (i > 0 && i % 16 == 0)
+      printf("\n");
+    printf("%.2X ", str[i]);
+  }
+  printf("\n");
+}
+
+int ctoh(char c) {
   assert(isxdigit(c));
   char str[2] = {c, '\0'};
   return strtol(str, NULL, 16);
 }
 
+uint8_t chartohex(char c) {
+  assert(isxdigit(c));
+  uint8_t res = UCHAR_MAX;
+  if (c >= '0' && c <= '9')
+    res = c - '0';
+  else if (c >= 'a' && c <= 'f')
+    res = c - 'a' + 10;
+  else //if (c >= 'A' && c <= 'F')
+    res = c - 'A' + 10;
+  return res;
+}
+
 int main() {
   printf("This program encrypts/decrypts files\n");
   printf("using AES256 encryption with ECB mode of operation\n");
-  printf("and PKCS#7 padding method\n");
+  printf("and ANSI X9.23 padding method\n\n");
 
-  printf("\nThe maximum supported file size is 4GB\n");
+  printf("The maximum supported file size is 4GB\n");
   printf("Enough RAM is required to load the file\n");
   printf("Encrypted files are 1 to 16 bytes larger than the original ones\n");
 
@@ -344,7 +357,7 @@ int main() {
     printf("Loading Source of Entropy\t");
     srand(time(NULL));
     printf("COMPLETE\n");
-    printf("Generating Keys\t");
+    printf("Generating Keys\t\t");
     for (uint8_t i = 0; i < 32; i++)
       key[i] = rand() % 256;
     printf("COMPLETE\n");
@@ -370,14 +383,13 @@ int main() {
       do {
         digit2 = getchar();
       } while (digit2 == ' ' || digit2 == '\n');
-      key[i] = hex(digit1) * 16 + hex(digit2);
+      key[i] = chartohex(digit1) * 16 + chartohex(digit2);
     }
     printf("Key readed\n");
   }
 
   printf("Key:\n");
-  for (uint8_t i = 0; i < 32 / AES_BLOCKLEN; i++)
-    phex(key + i * AES_BLOCKLEN);
+  PrintHex(key, 32);
   printf("\n");
 
   FILE* pFile = fopen("key.bin", "wb");
@@ -405,8 +417,14 @@ int main() {
   if (opt == 1) {
     uint8_t len = AES_BLOCKLEN - size % AES_BLOCKLEN;
     uint8_t* pad = new uint8_t[len];
-    for (uint8_t i = 0; i < len; i++)
-      pad[i] = len;
+
+// ANSI X9.23
+  for (uint8_t i = 0; i < len - 1; i++)
+    pad[i] = len;
+  pad[len - 1] = len;
+// PKCS#7
+//    for (uint8_t i = 0; i < len; i++)
+//      pad[i] = len;
     fwrite(pad, sizeof(uint8_t), len, file);
     size += len;
     printf("%d bytes have been added to the file to encrypt it\n", len);
