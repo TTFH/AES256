@@ -357,7 +357,7 @@ int main() {
     printf("Loading Source of Entropy\t");
     srand(time(NULL));
     printf("COMPLETE\n");
-    printf("Generating Keys\t\t");
+    printf("Generating Keys\t\t\t");
     for (uint8_t i = 0; i < 32; i++)
       key[i] = rand() % 256;
     printf("COMPLETE\n");
@@ -417,11 +417,10 @@ int main() {
   if (opt == 1) {
     uint8_t len = AES_BLOCKLEN - size % AES_BLOCKLEN;
     uint8_t* pad = new uint8_t[len];
-
 // ANSI X9.23
-  for (uint8_t i = 0; i < len - 1; i++)
-    pad[i] = len;
-  pad[len - 1] = len;
+    for (uint8_t i = 0; i < len - 1; i++)
+      pad[i] = 0x00;
+    pad[len - 1] = len;
 // PKCS#7
 //    for (uint8_t i = 0; i < len; i++)
 //      pad[i] = len;
@@ -435,11 +434,11 @@ int main() {
   fclose(file);
   time_t start = time(NULL);
   if (opt == 1) {
-    printf("Estimated Encryption time: %d seconds\n", size / (8 * 750000));
+    printf("Estimated Encryption time: %d seconds\n", size / 50000000);
     AES_encrypt(key, input, size);
     printf("Encrypted!\n");
   } else {
-    printf("Estimated Decryption time: %d seconds\n", size / 750000);
+    printf("Estimated Decryption time: %d seconds\n", size / 20000000);
     AES_decrypt(key, input, size);
     printf("Decrypted!\n");
   }
