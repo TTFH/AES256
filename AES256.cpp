@@ -1,8 +1,10 @@
-#include <time.h> // time
-#include <ctype.h> // isxdigit
-#include <stdio.h> // printf
-#include <stdint.h> // uintx_t
-#include <assert.h> // assert
+#include <time.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <limits.h>
 
 #define AES_BLOCKLEN 16 // Block length in bytes AES is 128b block only
 #define AES_keyExpSize 240
@@ -55,8 +57,7 @@ const uint8_t rsbox[256] = {
   0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61,
   0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d };
 
-const uint8_t Rcon[8] = {
-  0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40};
+const uint8_t Rcon[8] = { 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40 };
 
 uint8_t getSBoxValue(uint8_t num) {
   return sbox[num];
@@ -425,6 +426,7 @@ int main() {
 //    for (uint8_t i = 0; i < len; i++)
 //      pad[i] = len;
     fwrite(pad, sizeof(uint8_t), len, file);
+    delete[] pad;
     size += len;
     printf("%d bytes have been added to the file to encrypt it\n", len);
   }
@@ -453,6 +455,7 @@ int main() {
   pFile = fopen(fname, "wb");
   fwrite(input, sizeof(uint8_t), size, pFile);
   fclose(pFile);
+  delete[] input;
   printf("File saved on disk\n");
   return 0;
 }
