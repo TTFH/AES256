@@ -1,6 +1,8 @@
 # AES256
 Encrypt/Decrypt files using AES256 ECB ANSI X9.23
 
+# [DEPRECATED] DO NOT USE. This repo is just for learning purposes only.
+
 EXAMPLE:
 ```
 C:\Users\User\aes256>g++ -Wall -Werror -O3 AES256.cpp -o aes256
